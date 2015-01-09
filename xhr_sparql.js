@@ -7,13 +7,14 @@ sparql = ( function() {
       return
     }
 
-    var params = Object.keys( sparql.params ).map( encode ).join( '&' )
-      params += '&query=' + encodeURIComponent( query )
+    sparql.params.query = query ? query : sparql.params.query
+
+    var params = sparql.getParams()
     var url = sparql.xhr.url
-    var xhr =
-      window.XMLHttpRequest
-      ? new XMLHttpRequest()
-      : new ActiveXObject("Microsoft.XMLHTTP");
+    var xhr = 
+      window.XMLHttpRequest ? 
+      new XMLHttpRequest() : 
+      new ActiveXObject("Microsoft.XMLHTTP");
 
     xhr.onreadystatechange = ready
     if ( sparql.overrideMimeType ) {
@@ -23,17 +24,16 @@ sparql = ( function() {
       url += '?' + params
     }
     if ( !! sparql.xhr.user && sparql.xhr.pass ) {
-      xhr.open(
-        sparql.xhr.method,
-        url,
+      xhr.open( 
+        sparql.xhr.method, 
+        url, 
         sparql.xhr.async,
         sparql.xhr.user,
-        sparql.xhr.pass
+        sparql.xhr.pass 
       )
-    }
-    else {
-      xhr.open(
-        sparql.xhr.method,
+    } else {
+      xhr.open( 
+        sparql.xhr.method, 
         url,
         sparql.xhr.async
       )
@@ -42,7 +42,7 @@ sparql = ( function() {
       xhr.setRequestHeader( 'Content-Type', 'application/x-www-form-urlencoded' )
       xhr.send( params )
     }
-    else {
+    else { 
       xhr.send()
     }
 
@@ -53,34 +53,35 @@ sparql = ( function() {
         case 2:
         case 3:
           break
-        case 4:
+        case 4: 
           switch ( xhr.status ) {
             case 200:
               win_cb( xhr )
               break
             case 400:
             case 500:
+              /* falls through */
             default:
-              fail_cb ? fail_cb( xhr ) : console.warn( xhr.status )
+              if ( fail_cb ) {
+                fail_cb( xhr ) 
+              } else {
+                console.warn( xhr.status )
+              }
           }
           break
         default:
-          console.warn( xhr.readyState )
+          console.warn( xhr.readyState ) 
       }
-    }
-
-    function encode( e ) {
-      return e + '=' + encodeURIComponent( sparql.params[e] )
     }
 
   }
 
   sparql.xhr = {
     method : 'GET' ,
-    url : 'http://localhost:8890/sparql' ,
-    async : true ,
+    url : 'http://localhost:8890/sparql' , 
+    async : true , 
     user : undefined ,
-    pass : undefined ,
+    pass : undefined , 
     overrideMimeType : undefined ,
   }
 
@@ -94,14 +95,52 @@ sparql = ( function() {
     RDFXML : 'application/rdf+xml' ,
     CSV : 'text/csv' ,
     TSV : 'text/tab-separated-values' ,
+    CONSTRUCT : {
+      N3TURTLE : 'text/rdf+n3' ,
+      RDFJSON : 'application/rdf+json' ,
+      RDFXML : 'application/rdf+xml' ,
+      NTRIPLES : 'text/plain' ,
+      XHTMLRDFA : 'application/xhtml+xml' ,
+      ATOMXML : 'application/atom+xml' ,
+      ODATAJSON : 'application/odata+json' ,
+      JSONLD : 'application/x-json+ld' ,
+      HTMLLIST : 'text/x-html+ul' ,
+      HTMLTABLE : 'text/x-html+tr' ,
+      HTMLMICRODATA : 'text/html' ,
+      MICRODATAJSON : 'application/microdata+json' ,
+      CSV : 'text/csv' ,
+      TSV : 'text/tab-separated-values' ,
+      TRIG : 'application/x-trig' ,
+    } ,
   }
 
   sparql.params = {
     'default-graph-uri' : '' ,
+    query : '' ,
     format : 'text/plain' ,
     timeout : 0 ,
     debug : 'on' ,
   }
 
-  return sparql
+  sparql.setParams = function ( object ) {
+    function setIfDefined( element, index, array ) {
+      if ( object[element] ) {
+        sparql.params[element] = object[element]
+      }
+    }
+    Object.keys( sparql.params ).forEach( setIfDefined )
+    return sparql.params
+  }
+
+  sparql.getParams = function () {
+    function kv( string ) {
+      function encode( string ) {
+        return encodeURIComponent( string ).replace( /%20/g, '+' )
+      }
+      return encode( string ) + '=' + encode( sparql.params[string] )
+    }
+    return Object.keys( sparql.params ).map( kv ).join( '&' )
+  }
+
+  return sparql 
 } )()
