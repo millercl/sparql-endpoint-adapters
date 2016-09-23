@@ -7,5 +7,14 @@
     "type": "git",
     "url": "git+https://gist.github.com/ad8ea1a98ab34f195960.git"
   },
-  "license": "Unlicense"
+  "license": "Unlicense",
+  "devDependencies": {
+    "gulp": "^3.9.1",
+    "gulp-jscs": "^4.0.0",
+    "gulp-jscs-stylish": "^1.4.0",
+    "gulp-jshint": "^2.0.1",
+    "jscs": "^3.0.7",
+    "jshint": "^2.9.3",
+    "jshint-stylish": "^2.2.1"
+  }
 }
