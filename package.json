@@ -1,11 +1,11 @@
 {
-  "name": "sparql-endpoint-adapters",
-  "version": "1.0.0",
+  "name": "@millercl/sparql-endpoint-adapters",
+  "version": "1.0.1",
   "description": "shallow wrapper of the virtuoso sparql endpoint for node and browser.",
   "main": "node_sparql.js",
   "repository": {
     "type": "git",
-    "url": "git+https://gist.github.com/ad8ea1a98ab34f195960.git"
+    "url": "https://github.com/millercl/sparql-endpoint-adapters.git"
   },
   "license": "Unlicense",
   "devDependencies": {
